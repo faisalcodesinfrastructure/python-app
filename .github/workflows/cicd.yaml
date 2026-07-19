@@ -9,7 +9,7 @@ on:
 
 jobs:
   ci:
-    runs-on: unbuntu-latest
+    runs-on: ubuntu-latest
     steps:
     # Source - https://stackoverflow.com/a/61699863
     - name: Shorten commit id
