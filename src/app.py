@@ -11,7 +11,7 @@ def details():
     return jsonify({
         'time': datetime.datetime.now().strftime("%I:%M:%S%p  on %B %d, %Y"),
         'hostname': socket.gethostname(),
-        'message': 'Sample python app 4 testing'
+        'message': 'Sample python app for testing'
     })
 
 
