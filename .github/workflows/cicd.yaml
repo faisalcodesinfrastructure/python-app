@@ -37,22 +37,42 @@ jobs:
         context: .
         push: true
         tags: foxtrotalphaalpha/python-app:${{ env.COMMIT_ID }}
+    outputs:
+      commit_id: ${{ env.COMMIT_ID }}
+
+
   cd:
     needs: ci
     runs-on: self-hosted
     steps:
-    - name: Install 4 Argocd
-      shell: bash
-      run: |
-        curl -ksSL -o argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.7/argocd-linux-amd64
-        chmod +x argocd
-        sudo mv ./argocd /usr/local/bin/argocd
 
-    - name: Argocd APP Sync
-      shell: bash
-      run: |
-        argocd login argocd-server.argocd \
-          --insecure --grpc-web \
-          --username admin \
-          --password ${{ secrets.ARGOCD_PASSWORD }}
-        argocd app sync python-app
+      #cloning the repo to get the values.yaml file
+      - uses: actions/checkout@v3
+
+      - name: Modify values file
+        shell: bash
+        run: |
+          echo ${{needs.ci.outputs.commit_id}}
+          pip install yq
+          yq -Yi '.image.tag = "${{needs.ci.outputs.commit_id}}"' charts/python-app/values.yaml
+      
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Update values.yaml with commit id ${{needs.ci.outputs.commit_id}}' 
+
+      - name: Install Argocd
+        shell: bash
+        run: |
+          curl -ksSL -o argocd https://github.com/argoproj/argo-cd/releases/download/v2.12.7/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv ./argocd /usr/local/bin/argocd
+
+      - name: Argocd APP Sync
+        shell: bash
+        run: |
+          argocd login argocd-server.argocd \
+            --insecure --grpc-web \
+            --username admin \
+            --password ${{ secrets.ARGOCD_PASSWORD }}
+          argocd app sync python-app
