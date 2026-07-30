@@ -2,10 +2,10 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: python-app
-  description: Python application for frmo
+  description: Sample Flask service exposing info and health endpoints, deployed to Kubernetes via Helm
   # Example for optional annotations
   annotations:
-    github.com/project-slug: foxtrotalphaalpha/python-app
+    github.com/project-slug: faisalcodesinfrastructure/python-app
 
 spec:
   type: service
